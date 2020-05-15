@@ -1,0 +1,6 @@
+1. Post a hello world using default sls
+2. Write a simple client to replicate the "invoke" functionality and print out the repsonse
+3. Convert lambda / api gateway to send a grpc response that i print out
+4. Convert client to send a grpc request that lambda decodes and responds against
+5. Create another stage, but automate it through sls
+6. Add some fancy calculator logic to make it snazzy
