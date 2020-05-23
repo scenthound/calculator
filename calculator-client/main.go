@@ -4,15 +4,48 @@ import (
 	"net/http"
 	"io/ioutil"
 	"log"
+	"bytes"
+//	"encoding/json"
+	"github.com/golang/protobuf/proto"
+	pb "scenthound/calculator/calculator"
 )
 
 func main() {
-	
-	// Curl the API gateway endpoint
-	resp, err := http.Get("https://jxzyjaatkk.execute-api.us-east-1.amazonaws.com/dev/hello")
+
+	// Create protobuf object
+	hello := &pb.HelloRequest {
+		Name: "Hendrix",
+	}
+
+	// In theroy, out is now a byte array that we should be able to pass to the post request
+	requestBody, err := proto.Marshal(hello)
 	if err != nil {
 		log.Fatalln(err)
 	}
+
+
+	// Unmarshal
+	helloagain := &pb.HelloRequest{}
+	if err := proto.Unmarshal(requestBody, helloagain); err != nil {
+		log.Fatalln(err)
+	}
+
+	log.Println(helloagain)
+
+	// Curl the API gateway endpoing
+	resp, err := http.Post("https://jxzyjaatkk.execute-api.us-east-1.amazonaws.com/dev/hello", "application/x-protobuf", bytes.NewBuffer(requestBody))
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	/* Older JSON Marshaling
+	requestBody, err := json.Marshal(map[string]string{"name": "Hendrix",})
+
+	// Curl the API gateway endpoint
+	resp, err := http.Post("https://jxzyjaatkk.execute-api.us-east-1.amazonaws.com/dev/hello", "application/json", bytes.NewBuffer(requestBody))
+	if err != nil {
+		log.Fatalln(err)
+	}*/
 
 	defer resp.Body.Close()
 
