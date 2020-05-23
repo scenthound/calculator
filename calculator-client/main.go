@@ -14,12 +14,12 @@ import (
 func main() {
 
 	// Create protobuf object
-	hello := &pb.HelloRequest {
+	helloRequest := &pb.HelloRequest {
 		Name: "Hendrix",
 	}
 
 	// In theroy, out is now a byte array that we should be able to pass to the post request
-	requestBody, err := proto.Marshal(hello)
+	requestBody, err := proto.Marshal(helloRequest)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -41,11 +41,28 @@ func main() {
 	log.Println(helloagain)
 	*/
 
-	// Curl the API gateway endpoing
-	resp, err := http.Post("https://6xazvglpaj.execute-api.us-east-1.amazonaws.com/dev/grpc", "application/x-protobuf", bytes.NewBuffer(requestBody))
+	// Create an http client so we can set custom headers
+	client := http.Client{}
+	request, err := http.NewRequest("POST", "https://6xazvglpaj.execute-api.us-east-1.amazonaws.com/dev/grpc", bytes.NewBuffer(requestBody))
+	request.Header.Set("Content-Type", "application/x-protobuf")
+	request.Header.Set("Accept", "application/x-protobuf")
+
 	if err != nil {
 		log.Fatalln(err)
 	}
+
+	resp, err := client.Do(request)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+
+	// Curl the API gateway endpoing
+	/*	resp, err := http.Post("https://6xazvglpaj.execute-api.us-east-1.amazonaws.com/dev/grpc", "application/x-protobuf", bytes.NewBuffer(requestBody))
+	if err != nil {
+		log.Println("after post")
+		log.Fatalln(err)
+	}*/
 
 	/* Older JSON Marshaling
 	requestBody, err := json.Marshal(map[string]string{"name": "Hendrix",})
@@ -58,12 +75,22 @@ func main() {
 
 	defer resp.Body.Close()
 
+	helloReply := &pb.HelloReply{}
+
 	// Grab the message body
-	body, err := ioutil.ReadAll(resp.Body)
+	respBody, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
+		log.Println("grabbing message body")
+		log.Fatalln(err)
+	}
+
+	if err := proto.Unmarshal(respBody, helloReply); err != nil {
+		log.Println(respBody)
+		log.Println("unmarshaling")
 		log.Fatalln(err)
 	}
 
 	// Print the message body
-	log.Println(string(body))
+//	log.Println(string(body))
+	log.Println(helloReply)
 }
