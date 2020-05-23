@@ -7,6 +7,7 @@ import (
 	"bytes"
 //	"encoding/json"
 	"github.com/golang/protobuf/proto"
+//	b64 "encoding/base64"
 	pb "scenthound/calculator/calculator"
 )
 
@@ -23,17 +24,25 @@ func main() {
 		log.Fatalln(err)
 	}
 
+	/*
+	// Base64 Encode
+	encodedRequest := b64.StdEncoding.EncodeToString(requestBody)
+	log.Print(encodedRequest)
+
+	// Base64 Decode
+	decodedRequest, _ := b64.StdEncoding.DecodeString(encodedRequest)
 
 	// Unmarshal
 	helloagain := &pb.HelloRequest{}
-	if err := proto.Unmarshal(requestBody, helloagain); err != nil {
+	if err := proto.Unmarshal(decodedRequest, helloagain); err != nil {
 		log.Fatalln(err)
 	}
 
 	log.Println(helloagain)
+	*/
 
 	// Curl the API gateway endpoing
-	resp, err := http.Post("https://jxzyjaatkk.execute-api.us-east-1.amazonaws.com/dev/hello", "application/x-protobuf", bytes.NewBuffer(requestBody))
+	resp, err := http.Post("https://6xazvglpaj.execute-api.us-east-1.amazonaws.com/dev/grpc", "application/x-protobuf", bytes.NewBuffer(requestBody))
 	if err != nil {
 		log.Fatalln(err)
 	}
