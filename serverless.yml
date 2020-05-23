@@ -39,12 +39,6 @@ package:
     - ./bin/**
 
 functions:
-  hello:
-    handler: bin/hello
-    events:
-      - http:
-          path: hello
-          method: get
   calculator-grpc:
     handler: bin/calculator-grpc
     events:
