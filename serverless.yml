@@ -27,6 +27,9 @@ custom:
   apigwBinary:
     types:
       - 'application/x-protobuf'
+  stage: ${opt:stage, 'dev'}
+  methodPaths:
+    sayHello: 'grpc'
 
 provider:
   name: aws
@@ -43,6 +46,27 @@ functions:
     handler: bin/calculator-grpc
     events:
       - http:
-          path: grpc
+          path: ${self:custom.methodPaths.sayHello}
           method: post
           contentHandling: CONVERT_TO_BINARY
+
+# The convention that Serverless uses for the generated API GW resource is 'ApiGatewayRestApi'
+resources:
+  - Outputs:
+      ServiceEndpoint:
+        Export:
+          Name: ${self:custom.stage}-calculator-url
+      SayHelloMethod:
+        Value:
+          !Join
+            - ''
+            - - 'https://'
+              - !Ref ApiGatewayRestApi
+              - .execute-api.
+              - !Ref 'AWS::Region'
+              - .
+              - !Ref 'AWS::URLSuffix'
+              - /${self:custom.stage}
+              - /${self:custom.methodPaths.sayHello}
+        Export:
+          Name: ${self:custom.stage}-calculator-sayHello
