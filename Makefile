@@ -2,8 +2,8 @@
 
 build: gomodgen
 	export GO111MODULE=on
-	env GOOS=linux go build -ldflags="-s -w" -o bin/calculator-grpc calculator-grpc/main.go
-	env GOOS=linux go build -ldflags="-s -w" -o bin/calculator-client calculator-client/main.go
+	env GOOS=linux go build -ldflags="-s -w" -o bin/calculator-grpc calculator/calculator-grpc/main.go
+	env GOOS=linux go build -ldflags="-s -w" -o bin/calculator-client calculator/calculator-client/main.go
 
 clean:
 	rm -rf ./bin ./vendor Gopkg.lock
