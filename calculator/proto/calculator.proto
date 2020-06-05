@@ -1,21 +1,28 @@
 syntax = "proto3";
 package scenthound;
 
-option go_package = ".;scenthound";
-
-// The greeting service definition.
-service Greeter {
-  // Sends a greeting
-  rpc SayHello (HelloRequest) returns (HelloReply) {}
+service Calculator {
+	rpc Evaluate (Expression) returns (Response);
 }
 
-// The request message containing the user's name.
-message HelloRequest {
-  string name = 1;
+enum Operations {
+	ADD = 0;
+	SUBTRACT = 1;
+	MULTIPLY = 2;
+	DIVIDE = 3;
 }
 
-// The response message containing the greetings
-message HelloReply {
-  string message = 1;
+message Operands {
+	double number1 = 1;
+	double number2 = 2;
 }
 
+message Expression {
+	Operations operation = 1;
+	Operands operands = 2;
+}
+
+message Response {
+	Expression expression = 1;
+	double result = 2;
+}

@@ -8,7 +8,7 @@ import (
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
 
-	greeter "scenthound/calculator/greeter"
+	calculator "scenthound/calculator/calculator"
 	pb "scenthound/calculator/proto"
 
 )
@@ -16,8 +16,8 @@ import (
 func Handler(ctx context.Context, req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	var requestBody []byte
 
-	// Create a greeter instance from the protobuf interface
-	var gs pb.GreeterServer = greeter.Greeter{}
+	// Create a calculator instance from the protobuf interface
+	var cs pb.CalculatorServer = calculator.Calculator{}
 
 	// Decode the base64 encoded message
 	if req.IsBase64Encoded {
@@ -25,19 +25,19 @@ func Handler(ctx context.Context, req events.APIGatewayProxyRequest) (events.API
 	}
 
 	// Unmarshal back to protobuf
-	helloRequest := &pb.HelloRequest{}
-	if err := proto.Unmarshal(requestBody, helloRequest); err != nil {
+	expression := &pb.Expression{}
+	if err := proto.Unmarshal(requestBody, expression); err != nil {
 		return events.APIGatewayProxyResponse{StatusCode: 404}, err
 	}
 
 	// Create protobuf response object
-	helloReply, err := gs.SayHello(ctx, helloRequest)
+	response, err := cs.Evaluate(ctx, expression)
 	if err != nil {
 		return events.APIGatewayProxyResponse{StatusCode: 404}, err
 	}
 
 	// Marshal response to binary
-	responseBody, err := proto.Marshal(helloReply)
+	responseBody, err := proto.Marshal(response)
 	if err != nil {
 		return events.APIGatewayProxyResponse{StatusCode: 404}, err
 	}
